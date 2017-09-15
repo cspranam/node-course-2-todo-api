@@ -48,6 +48,25 @@ app.get('/todos/:id', (req, res) => {
 	}
 });
 
+app.delete('/todos/:id', (req, res) => {
+	var id = req.params.id;
+	if (ObjectID.isValid(id)){
+		Todo.findByIdAndRemove(id).then((todo)=>{
+			if(todo){
+				res.status(200).send({todo});
+			} else {
+				res.status(404).send('id not found');
+			}
+		},(err)=>{
+			res.status(400).send('Error. Please contact administrator');
+		}).catch((e) => {
+			res.status(400).send(err);
+		});
+	} else {
+		res.status(404).send('id is invalid');
+	}
+});
+
 app.listen(port, ()=> {
 	console.log(`Started on port ${port}`);
 })
