@@ -12,6 +12,7 @@ var UserSchema = mongoose.Schema({
 		trim: true,
 		unique: true,
 		validate: {
+			isAsync: false,
 			validator: validator.isEmail,
 			message: '{VALUE} is not a valid email'
 		}
@@ -47,6 +48,17 @@ UserSchema.methods.generateAuthToken = function () {
 		return token;
 	});
 };
+
+UserSchema.methods.removeToken = function(token){
+	var user = this;
+	return user.update({
+		$pull:{
+			tokens:{
+				token: token
+			}
+		}
+	});
+}
 
 UserSchema.statics.findByToken = function(token) {
 	var User = this;
